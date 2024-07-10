@@ -1,0 +1,77 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.idea/
+.gradle/
+local.properties
+*.iml
+# Log files
+*.log
+# Android build files
+/build/
+/captures/
+# IntelliJ
+/out/
+# Gradle
+.gradle/
+/build/
+/**/build/
+# Keystore files
+*.jks
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+# OR specify where the file is located if not at the root level:
+# app/google-services.json
+# Android Studio generated files and folders
+*.apk
+*.ap_
+*.dex
+*.class
+*.so
+*.dSYM/
+*.zip
+*.aar
+*.jar
+# Code coverage reports
+coverage/
+# lint
+lint/partialResults/
+lint/outputs/
+# Lint reports
+lint/outputs/
+lint/reports/
+# Java Template
+.idea
+build
+*.iml
+# Web files
+node_modules/
+bower_components/
+# macOS
+.DS_Store
+# Directories generated at runtime
+replay_pid*
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+# External native build folder generated in Android Studio 2.2+
+.externalNativeBuild/
+# ndk build folders
+.obj/
+.libraries/
+# App Bundles
+*.aab
+# Packaging
+*.apks
+*.apkm
