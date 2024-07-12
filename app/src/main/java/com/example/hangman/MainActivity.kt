@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HangmanTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Hangman(word = SelectWord(),
+                    Hangman(word = selectWord(),
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -66,7 +66,8 @@ class MainActivity : ComponentActivity() {
 fun Hangman(word: String, modifier: Modifier = Modifier) {
     var lives by remember { mutableIntStateOf(3) }
     var letterColor = remember { mutableStateMapOf<Char, Color>() }
-
+    var guessedLetters by remember {mutableStateOf("")}
+    var underscoredWord = generateUnderscores(word=word, guessedLetters=guessedLetters)
     Column(
 
         modifier = Modifier
@@ -88,6 +89,13 @@ fun Hangman(word: String, modifier: Modifier = Modifier) {
             text = lives.toString(),
             fontSize = 45.sp
         )
+
+        Text(
+            text = underscoredWord,
+            fontSize = 30.sp,
+            letterSpacing = 7.sp
+        )
+
         AlphabetGrid(
             letterColor = letterColor,
             onLetterClicked = { letter ->
@@ -96,6 +104,7 @@ fun Hangman(word: String, modifier: Modifier = Modifier) {
             if (indexes.isEmpty()) {
                 lives -= 1
             }
+            guessedLetters += letter.lowercase()
         })
     }
 }
@@ -180,12 +189,12 @@ private fun checkLetter(word: String, letter: Char): Pair<Color, MutableList<Int
 @Composable
 fun GreetingPreview() {
     HangmanTheme {
-        Hangman(SelectWord())
+        Hangman(selectWord())
     }
 }
 
 @Composable
-fun SelectWord(): String {
+fun selectWord(): String {
     val words = stringResource(R.string.words).split(" ").toTypedArray()
     val randomIndex = Random.nextInt(words.size)
     val word = words[randomIndex]
@@ -195,9 +204,7 @@ fun SelectWord(): String {
 
 
 //generates the word to be shown according to the letters guessed so far
-@Preview
-@Composable
-fun GenerateUnderscores(word:String="canal",guessedLetters:String="al"){
+fun generateUnderscores(word:String,guessedLetters:String):String{
     val builder = StringBuilder()
     for (char in word){
         if (char in guessedLetters) {
@@ -206,8 +213,7 @@ fun GenerateUnderscores(word:String="canal",guessedLetters:String="al"){
             builder.append("_")
         }
     }
-    Text(text=builder.toString())
-    //return builder.toString()
+    return builder.toString()
 }
 
 @Preview()
