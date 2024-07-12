@@ -1,7 +1,6 @@
 package com.example.hangman
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -25,25 +24,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hangman.ui.theme.HangmanTheme
-import java.io.File
-import java.io.BufferedReader
-import java.io.FileWriter
 import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
@@ -111,9 +102,14 @@ fun Hangman(word: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun AlphabetButton(letter: Char, color: Color, onLetterClicked: (Char) -> Unit) {
+    var isClicked by remember { mutableStateOf(false)}
+
     Button(
         onClick = {
-            onLetterClicked(letter)
+            if (!isClicked) {
+                isClicked = true
+                onLetterClicked(letter)
+            }
         },
         contentPadding = PaddingValues(horizontal = 1.dp, vertical = 1.dp),
         colors = ButtonDefaults.outlinedButtonColors(Color(color.value)),
@@ -164,7 +160,7 @@ fun AlphabetGrid(letterColor: Map<Char, Color>, onLetterClicked: (Char) -> Unit)
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             for (i in 24 until 26) {
-                var letter = alphabet[i]
+                val letter = alphabet[i]
                 AlphabetButton(letter = alphabet[i], color = letterColor[letter] ?: Color.White, onLetterClicked = onLetterClicked)
             }
         }
