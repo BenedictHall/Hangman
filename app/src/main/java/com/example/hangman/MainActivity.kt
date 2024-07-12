@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             HangmanTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Hangman(
+                    Hangman(word = SelectWord(),
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -63,11 +63,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Hangman(modifier: Modifier = Modifier) {
+fun Hangman(word: String, modifier: Modifier = Modifier) {
     var lives by remember { mutableIntStateOf(3) }
     var letterColor = remember { mutableStateMapOf<Char, Color>() }
 
     Column(
+
         modifier = Modifier
             .statusBarsPadding()
             .padding(horizontal = 10.dp)
@@ -80,6 +81,7 @@ fun Hangman(modifier: Modifier = Modifier) {
             fontSize = 40.sp
         )
 
+        Text(text = word)
         Spacer(modifier = Modifier.height(50.dp))
 
         Text(
@@ -89,7 +91,7 @@ fun Hangman(modifier: Modifier = Modifier) {
         AlphabetGrid(
             letterColor = letterColor,
             onLetterClicked = { letter ->
-            val (color, indexes) = checkLetter("Hello", letter)
+            val (color, indexes) = checkLetter(word, letter)
                 letterColor[letter] = color
             if (indexes.isEmpty()) {
                 lives -= 1
@@ -178,17 +180,17 @@ private fun checkLetter(word: String, letter: Char): Pair<Color, MutableList<Int
 @Composable
 fun GreetingPreview() {
     HangmanTheme {
-        Hangman()
+        Hangman(SelectWord())
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun SelectWord() {
+fun SelectWord(): String {
     val words = stringResource(R.string.words).split(" ").toTypedArray()
-    val randomIndex = Random.nextInt(words.size);
+    val randomIndex = Random.nextInt(words.size)
     val word = words[randomIndex]
-    Text(text=word)
+
+    return word
 }
 
 
