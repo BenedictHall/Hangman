@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.hangman.ui.theme.HangmanTheme
 import kotlin.random.Random
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,22 +47,95 @@ class MainActivity : ComponentActivity() {
         setContent {
             HangmanTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Hangman(word = selectWord(),
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    App(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
     }
 }
+@Preview
+@Composable
+fun App(modifier: Modifier = Modifier){
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "hangman"){
+        composable(route = "hangman"){
+            var word = selectWord()
+            Hangman(word = word, onLose = {navController.navigate("winLoss/loss/$word")}, onWin ={navController.navigate("winLoss/win/$word")})
+        }
+        composable(route="winLoss/{winLoss}/{word}"){
+            val winLoss = it.arguments?.getString("winLoss")
+            val word = it.arguments?.getString("word")
+            WinLossPage(winLoss = winLoss, word=word, nav = {navController.navigate("hangman")})
+        }
+    }
+
+}
 
 @Composable
-fun Hangman(word: String, modifier: Modifier = Modifier) {
+fun Hangman(word: String, onLose: () -> Unit, onWin: () -> Unit, modifier: Modifier = Modifier) {
     var lives by remember { mutableIntStateOf(3) }
     var letterColor = remember { mutableStateMapOf<Char, Color>() }
     var guessedLetters by remember {mutableStateOf("")}
     var underscoredWord = generateUnderscores(word=word, guessedLetters=guessedLetters)
-    Column(
+    if ("_" !in underscoredWord){
+        onWin()
+    }
+    Column (
+        modifier = Modifier
+            .statusBarsPadding()
+            .padding(horizontal = 10.dp)
+            .safeDrawingPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround
+    ){
+
+        Column(
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(horizontal = 10.dp)
+                .padding(bottom = 300.dp)
+                .safeDrawingPadding(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = stringResource(R.string.lives),
+                fontSize = 40.sp
+            )
+
+            Text(text = word)
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Text(
+                text = lives.toString(),
+                fontSize = 45.sp
+            )
+
+            Text(
+                text = underscoredWord,
+                fontSize = 30.sp,
+                letterSpacing = 7.sp
+            )
+        }
+        AlphabetGrid(
+            letterColor = letterColor,
+            onLetterClicked = { letter ->
+                val (color, indexes) = checkLetter(word, letter)
+                letterColor[letter] = color
+                if (indexes.isEmpty()) {
+                    lives -= 1
+                    if (lives == 0) {
+                        onLose()
+                    }
+                }
+                guessedLetters += letter.lowercase()
+            })
+    }
+}
+
+@Composable
+fun WinLossPage(winLoss:String?,word:String?, nav: () -> Unit) {
+    Column (
 
         modifier = Modifier
             .statusBarsPadding()
@@ -67,37 +143,18 @@ fun Hangman(word: String, modifier: Modifier = Modifier) {
             .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = stringResource(R.string.lives),
-            fontSize = 40.sp
-        )
-
-        Text(text = word)
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text(
-            text = lives.toString(),
-            fontSize = 45.sp
-        )
-
-        Text(
-            text = underscoredWord,
-            fontSize = 30.sp,
-            letterSpacing = 7.sp
-        )
-
-        AlphabetGrid(
-            letterColor = letterColor,
-            onLetterClicked = { letter ->
-            val (color, indexes) = checkLetter(word, letter)
-                letterColor[letter] = color
-            if (indexes.isEmpty()) {
-                lives -= 1
-            }
-            guessedLetters += letter.lowercase()
-        })
+    ){
+        if (winLoss == "win") {
+            Text("you win")
+        }else{
+            Text("you lose")
+        }
+        Text("The word was $word")
+        Button(onClick = {nav()}) {
+            Text("Play again?")
+        }
     }
+
 }
 
 @Composable
@@ -181,13 +238,13 @@ private fun checkLetter(word: String, letter: Char): Pair<Color, MutableList<Int
     return Pair(color, indexes)
 }
 
-@Preview(showBackground = true, showSystemUi = false)
-@Composable
-fun GreetingPreview() {
-    HangmanTheme {
-        Hangman(selectWord())
-    }
-}
+//@Preview(showBackground = true, showSystemUi = false)
+//@Composable
+//fun GreetingPreview() {
+//    HangmanTheme {
+//        Hangman(selectWord())
+//    }
+//}
 
 @Composable
 fun selectWord(): String {
