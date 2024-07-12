@@ -103,7 +103,6 @@ fun Hangman(word: String, modifier: Modifier = Modifier) {
 @Composable
 fun AlphabetButton(letter: Char, color: Color, onLetterClicked: (Char) -> Unit) {
     var isClicked by remember { mutableStateOf(false)}
-    var actionPerformed by remember { mutableStateOf(false)}
 
     Button(
         onClick = {
