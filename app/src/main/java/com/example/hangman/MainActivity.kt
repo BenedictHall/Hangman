@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-@Preview
+//@Preview
 @Composable
 fun App(modifier: Modifier = Modifier){
     val navController = rememberNavController()
@@ -94,6 +94,7 @@ fun Hangman(word: String, onLose: () -> Unit, onWin: () -> Unit, modifier: Modif
                 .statusBarsPadding()
                 .padding(horizontal = 10.dp)
                 .padding(bottom = 300.dp)
+                .padding(top = 10.dp)
                 .safeDrawingPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -103,17 +104,17 @@ fun Hangman(word: String, onLose: () -> Unit, onWin: () -> Unit, modifier: Modif
                 fontSize = 40.sp
             )
 
-            Text(text = word)
-            Spacer(modifier = Modifier.height(50.dp))
+            //Text(text = word)
+            Spacer(modifier = Modifier.height(30.dp))
 
             Text(
                 text = lives.toString(),
                 fontSize = 45.sp
             )
-
+            Spacer(modifier = Modifier.height(70.dp))
             Text(
                 text = underscoredWord,
-                fontSize = 30.sp,
+                fontSize = 35.sp,
                 letterSpacing = 7.sp
             )
         }
@@ -136,25 +137,33 @@ fun Hangman(word: String, onLose: () -> Unit, onWin: () -> Unit, modifier: Modif
 @Composable
 fun WinLossPage(winLoss:String?,word:String?, nav: () -> Unit) {
     Column (
-
         modifier = Modifier
-            .statusBarsPadding()
-            .padding(horizontal = 10.dp)
-            .safeDrawingPadding(),
+            //.statusBarsPadding()
+            .padding(horizontal = 50.dp, vertical = 100.dp)
+            //.safeDrawingPadding()
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ){
         if (winLoss == "win") {
-            Text("you win")
+            Text("You win!", fontSize = 50.sp)
         }else{
-            Text("you lose")
+            Text("You lose!", fontSize = 50.sp)
         }
-        Text("The word was $word")
+        Spacer(modifier = Modifier.height(40.dp))
+        Text("The word was $word", fontSize = 25.sp)
+        Spacer(modifier = Modifier.height(340.dp))
         Button(onClick = {nav()}) {
-            Text("Play again?")
+            Text("Play again?", fontSize = 30.sp)
         }
     }
 
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun WinLossLayoutPreview() {
+        WinLossPage(winLoss="win",word="word",nav={val fake = false})
 }
 
 @Composable
